@@ -5,8 +5,16 @@
 
  Board info via USB:   u-blox NORA-W10 series (ESP32-S3)
 
-![JC4827W543_board](/Pictures/1-1.jpg)
-![JC4827W543_board](/Pictures/1-2.png)
+![JC4827W543_board](./Pictures/1-1.jpg)
+
+![JC4827W543_board](./Pictures/1-2.png)
+
+Schematics:
+
+![JC4827W543-1](./Pictures/JC4827W543-1.png)
+
+![JC4827W543-2](./Pictures/JC4827W543-2.png)
+
 
 + 4.3-inch LCD-TFT (display driver NV3041A  4-bit parallel)
 + Supports WiFi and Bluetooth
@@ -34,7 +42,7 @@ https://aliexpress.ru/item/1005006729657546.html
 
 https://aliexpress.ru/item/1005004837211340.html
 
-![JC4827W543_board](/Pictures/1-3.png)
+![JC4827W543_board](./Pictures/1-3.png)
 
 
 
@@ -54,7 +62,7 @@ Move lv_conf.h file to ..../Arduino/libraries directory
 
 WARNING: install lvgl ver 8.4.0 !!!
 
-![JC4827W543_board](/Pictures/Arduino.png)
+![JC4827W543_board](./Pictures/Arduino.png)
 
 ## Fast DMA drawing LVGL example
 In lv_conf.h file set:

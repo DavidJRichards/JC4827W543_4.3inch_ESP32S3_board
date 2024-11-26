@@ -69,6 +69,50 @@ Arduino_GFX *gfx = new Arduino_Canvas(480 /* width */, 272 /* height */, g);
 /*******************************************************************************
  * End of Arduino_GFX setting
  ******************************************************************************/
+#define NV3041A_SCROLL_ADR 0x33  // 2 bytes data, Define the Vertical Scrolling Area of the display.
+#define NV3041A_VSCSAD 0x37      // Vertical Scrolling Start Address, starts scrolling.
+
+// The scrolling area must be a integral multiple of TEXT_HEIGHT
+#define TEXT_HEIGHT 16    // Height of text to be printed and scrolled
+#define BOT_FIXED_AREA 0  // Number of lines in bottom fixed area (lines counted from bottom of screen)
+#define TOP_FIXED_AREA 0  // Number of lines in top fixed area (lines counted from top of screen)
+#define YMAX 272          // Bottom of screen area
+
+// The initial y coordinate of the top of the scrolling area
+uint16_t yStart = TOP_FIXED_AREA;
+// yArea must be a integral multiple of TEXT_HEIGHT
+uint16_t yArea = YMAX - TOP_FIXED_AREA - BOT_FIXED_AREA;
+// The initial y coordinate of the top of the bottom text line
+uint16_t yDraw = YMAX - BOT_FIXED_AREA - TEXT_HEIGHT;
+
+
+void setupScrollArea(uint16_t tfa, uint16_t bfa) {
+
+  uint16_t vsa = YMAX-tfa-bfa;  // vertival scrolling area line count ?start address
+    
+  uint8_t page_sequence[5] = {
+    NV3041A_VSCSAD,
+    tfa >> 8, tfa,
+    vsa >> 8, vsa
+  };
+
+  gfx->startWrite();
+  gfx->write(page_sequence[5]);
+  gfx->endWrite();
+
+#if 0
+  gfx->sendCommand(ILI9341_VSCRDEF); // Vertical scroll definition
+  gfx->sendData(tfa >> 8);           // Top Fixed Area line count
+  gfx.writedata(tfa);
+  gfx.writedata((YMAX-tfa-bfa)>>8);  // Vertical Scrolling Area line count
+  gfx.writedata(YMAX-tfa-bfa);
+  gfx.writedata(bfa >> 8);           // Bottom Fixed Area line count
+  gfx.writedata(bfa);
+#endif
+}
+
+
+
 
 /*******************************************************************************
  * Please config the touch panel in touch.h
@@ -146,8 +190,7 @@ void setup()
   digitalWrite(GFX_BL, HIGH);
 #endif
 
- 
-  
+   
   // Init touch device
   touch_init(gfx->width(), gfx->height(), gfx->getRotation());
 
