@@ -1,6 +1,6 @@
 # JC4827W543_board
- ESP32-S3 with 4.3' TFT 480x270 driver NV3041A and capacitive touch
-
+ ESP32-S3 with 4.3' TFT 480x270 driver NV3041A and capacitive or resistance touch.
+ 
  Read Docs/Getting started.pdf
 
  Board info via USB:   u-blox NORA-W10 series (ESP32-S3)
@@ -16,14 +16,14 @@ Schematics:
 ![JC4827W543-2](./Pictures/JC4827W543-2.png)
 
 
-+ 4.3-inch LCD-TFT (display driver NV3041A  4-bit parallel)
++ 4.3-inch LCD-TFT (display driver NV3041A  4-bit parallel SPI)
 + Supports WiFi and Bluetooth
 + Support lithium battery power supply
-+ Capacitive touch or Resistance touch (Capacitive touch driver GT911 I2C)
++ Capacitive touch (driver GT911 I2C)
++ or Resistance touch (driver XPT2046)
 + 480 x 272 screen resolution
 + RGB 65K 16 bit
 + Onboard 240MHz ESP32-S3-WROOM-1-N4R8 dual-core
-+ integrated WI-FI and Bluetooth
 + 520K Byte RAM
 + 8 MB PSRAM (OSPI)
 + 4 MB Flash memory (QSPI)
@@ -53,12 +53,59 @@ Select board:
 OR
 + ESP32S3 Dev module
 
-Need install library:
+Install library:
 + GFX Library for Arduino by Moon On Our Nation (ver 1.4.6)  https://github.com/moononournation/Arduino_GFX
 + lvgl by kisvegabor (ver 8.4.0)    https://github.com/lvgl/lvgl/releases/tag/v8.4.0
-+ TouchLib by mmMicky add library from zip file  https://github.com/mmMicky/TouchLib
++ for capacitive touch: TouchLib by mmMicky add library from zip file  https://github.com/mmMicky/TouchLib
++ for resistance touch: XPT2046_Touchscreen by Paul Stoffregen (ver. 1.4) https://github.com/PaulStoffregen/XPT2046_Touchscreen.git
++ for resistance touch modify touch.h file as shown below:
 
-Move lv_conf.h file to ..../Arduino/libraries directory
+```
+  /* uncomment for XPT2046 */
+ #define TOUCH_XPT2046
+ #define TOUCH_XPT2046_SCK 12
+ #define TOUCH_XPT2046_MISO 13
+ #define TOUCH_XPT2046_MOSI 11
+ #define TOUCH_XPT2046_CS 38
+ #define TOUCH_XPT2046_INT 3
+ #define TOUCH_XPT2046_ROTATION 0
+ #define TOUCH_XPT2046_SAMPLES 50
+
+//uncomment for most capacitive touchscreen
+//#define TOUCH_MODULES_GT911 // GT911 / CST_SELF / CST_MUTUAL / ZTW622 / L58 / FT3267 / FT5x06
+//#define TOUCH_MODULE_ADDR GT911_SLAVE_ADDRESS1 // CTS328_SLAVE_ADDRESS / L58_SLAVE_ADDRESS / CTS826_SLAVE_ADDRESS / CTS820_SLAVE_ADDRESS / CTS816S_SLAVE_ADDRESS / FT3267_SLAVE_ADDRESS / FT5x06_ADDR / GT911_SLAVE_ADDRESS1 / GT911_SLAVE_ADDRESS2 / ZTW622_SLAVE1_ADDRESS / ZTW622_SLAVE2_ADDRESS
+//#define TOUCH_SCL 4
+// #define TOUCH_SDA 8
+// #define TOUCH_RES 38
+// #define TOUCH_INT 3
+```
++ Please config the touch panel in touch.h
++ use functions from touch.h as shown below:
+```
+#include "touch.h"
+```
+```
+//----------- setup -----------------
+touch_init(gfx->width(), gfx->height(), gfx->getRotation());
+```
+```
+//----------- loop -----------------
+if (touch_has_signal())
+  {
+    if (touch_touched())
+    {
+      // your code here
+     }
+    else if (touch_released())
+    {
+      // your code here
+    }
+  }
+//---------------------------
+```
+
++ Move lv_conf.h file (from Examples/Demo_Arduino
+/Libraries folder) to ..../Arduino/libraries directory
 
 WARNING: install lvgl ver 8.4.0 !!!
 
@@ -232,3 +279,7 @@ void loop()
 //=====================================================================================================================
 
 ```
+
+## Video example
+https://github.com/user-attachments/assets/85a67478-a86b-4d5d-81d4-401bac6c66d0
+
